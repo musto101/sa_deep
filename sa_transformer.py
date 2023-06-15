@@ -1,5 +1,7 @@
 '''
     The original Transformer code is from: http://nlp.seas.harvard.edu/2018/04/03/attention.html
+    The modification for survival analysis is done by: https://github.com/shihux/sa_transformer/blob/main/sa_transformer.py
+    I have modified it for use on the ELSA dataset.
 '''
 
 import os,sys
