@@ -129,6 +129,8 @@ env.bak/
 venv.bak/
 data/
 .idea/
+paper_drafts/
+checkpoints/
 # Spyder project settings
 .spyderproject
 .spyproject
