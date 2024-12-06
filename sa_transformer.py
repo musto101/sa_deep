@@ -16,7 +16,7 @@ from lifelines import *
 import pandas as pd
 import argparse
 from operator import itemgetter
-from concordance import concordance_index
+# from concordance import concordance_index
 import optuna
 from sklearn.model_selection import KFold
 from sklearn.model_selection import train_test_split
@@ -24,17 +24,15 @@ from sklearn.preprocessing import StandardScaler
 from sklearn_pandas import DataFrameMapper
 from sklearn.impute import KNNImputer
 from skrebate import ReliefF
-import numpy as np
-
 
 np.random.seed(1234)
 
 codes = {"CN_MCI": 0, "Dementia": 1}
 
-dat = pd.read_csv("data/mci_lipids.csv")
+dat = pd.read_csv("data/mci_preprocessed_wo_csf.csv")
 # drop first two columns
-dat.drop(dat.columns[0], axis=1, inplace=True)
-dat.drop(dat.columns[0], axis=1, inplace=True)
+# dat.drop(dat.columns[0], axis=1, inplace=True)
+# dat.drop(dat.columns[0], axis=1, inplace=True)
 dat["last_DX"].replace(codes, inplace=True)
 
 best_params = []
@@ -363,9 +361,7 @@ def clones(module, N):  # return a ModuleList of N identical modules
     )  # NOTE copy.deepcopy() is used to avoid sharing parameters between multiple layers of the same type in the Transformer model (https://pytorch.org/docs/stable/nn.html#torch.nn.ModuleList)
 
 
-def attention(
-    query, key, value, mask=None, dropout=None
-):  # query, key, value are tensors of size (batch_size, max_time, d_model)
+def attention(query, key, value, mask=None, dropout=None):  # query, key, value are tensors of size (batch_size, max_time, d_model)
     d_k = query.size(-1)  # d_k is the last dimension of query
     scores = torch.matmul(query, key.transpose(-2, -1)) / math.sqrt(
         d_k

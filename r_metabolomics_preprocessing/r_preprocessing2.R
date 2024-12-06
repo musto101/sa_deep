@@ -3,7 +3,7 @@ library(ggthemes)
 library(labelled)
 library(caret)
 
-install.packages('Hmisc')
+# install.packages('Hmisc')
 # install.packages("../adnimerge_package/ADNIMERGE_0.0.1.tar.gz", repos = NULL,
 #                  type = "source")
 
@@ -36,7 +36,7 @@ adni_ad <- adni_without_zero %>% mutate(DX = if_else(DX == 'Dementia', 'AD', DX)
 
 adni_bl <- adni_ad %>% filter(VISCODE == 'bl')
 
-write.csv(adni_bl, 'data/adni_bl.csv')
+write.csv(adni_bl, 'data/adni_bl2.csv')
 
 
 # creating the longitudinal data
@@ -70,7 +70,7 @@ adni_long$X1 <- NULL # removing artifacts
 adni_long$...1 <- NULL
 
 adni_wo_missing <- adni_long %>%
-  purrr::discard(~ sum(is.na(.x))/length(.x) * 100 >=50) # removing columns with missing data > 90%
+  purrr::discard(~ sum(is.na(.x))/length(.x) * 100 >=50) # removing columns with missing data > 50%
 
 adni_slim <- adni_wo_missing %>%
   select(-RID, -PTID, -VISCODE, -SITE, -COLPROT, -ORIGPROT, -EXAMDATE,
@@ -87,26 +87,27 @@ adni_slim$PTAU <- NULL
 
 adni_slim$last_DX <- as.factor(adni_slim$last_DX)
 
-write.csv(adni_slim, 'data/adni1_slim_wo_csf.csv') # writing to csv file
+write.csv(adni_slim, 'data/adni1_slim_wo_csf2.csv') # writing to csv file
 
 # splitting into mci and cn groups
 
-source('r_metabolomics_preprocessing/preprocessing_func.R')
+source('r_metabolomics_preprocessing/preprocessing_func2.R')
 
-adni_slim <- read.csv('data/adni1_slim_wo_csf.csv', stringsAsFactors = T)
+adni_slim <- read.csv('data/adni1_slim_wo_csf2.csv', stringsAsFactors = T)
 
 #table(adni_slim$last_DX)
 adni_slim$VID <- NULL
 adni_slim$COHORT <- NULL
 adni_slim$X <- NULL
 adni_slim$SAMPLE.ID <- NULL
+adni_slim$GUSPECID <- NULL
 #str(adni_slim)
 
 mci <- preprocessing(adni_slim, 0.9, clinGroup = 'MCI')
 
 table(mci$last_DX)
 
-write.csv(mci, 'data/mci_preprocessed_wo_csf.csv') # writes the resultant data.frame to CSV.
+write.csv(mci, 'data/mci_preprocessed_wo_csf2.csv') # writes the resultant data.frame to CSV.
 #table(mci$last_DX)
 
 # just including demographics, neuropsych tests, and lipids

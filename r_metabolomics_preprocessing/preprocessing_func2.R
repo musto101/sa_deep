@@ -15,24 +15,24 @@ preprocessing <- function(dat, perc, clinGroup) {
 
   dat$last_DX <- as.factor(dat$last_DX)
 
-  missing.perc <- apply(dat, 2, function(x) sum(is.na(x))) / nrow(dat) # calculating missing perc
-
-  dat <- dat[, which(missing.perc < perc)] # removing columns where missingness % > perc. in ADNISurvivalProject this is just a failsafe and should have already been done.
-  dat <- dat[dat$PTMARRY != 'Unknown',] # removing rows where marital status = 'Unknown'
-  dat <- dat[dat$last_visit > 0,] # Removing rows where last visit <= 0
-
-  y <- dat %>%
-    mutate_all(funs(ifelse(is.na(.), 1, 0))) # created a bunch of bool cols indicating the presence and location of NA values in dat.
-
-  blah <- y %>%
-    select_if(function(col) is.numeric(col) && sum(col) == 0) # sanity check
-
-  y <- y %>%
-    select_if(negate(function(col) is.numeric(col) && sum(col) == 0)) # selecting only columns that indicate at least one na value
-
-  names(y) <- paste0(names(y), '_na') # affixing the suffix _na to denote that they are na indicator cols.
-
-  dat <- cbind(dat, y) # affixing the na indicator columns to the original dataset.
+  # missing.perc <- apply(dat, 2, function(x) sum(is.na(x))) / nrow(dat) # calculating missing perc
+  # 
+  # dat <- dat[, which(missing.perc < perc)] # removing columns where missingness % > perc. in ADNISurvivalProject this is just a failsafe and should have already been done.
+  # dat <- dat[dat$PTMARRY != 'Unknown',] # removing rows where marital status = 'Unknown'
+  # dat <- dat[dat$last_visit > 0,] # Removing rows where last visit <= 0
+  # 
+  # y <- dat %>%
+  #   mutate_all(funs(ifelse(is.na(.), 1, 0))) # created a bunch of bool cols indicating the presence and location of NA values in dat.
+  # 
+  # blah <- y %>%
+  #   select_if(function(col) is.numeric(col) && sum(col) == 0) # sanity check
+  # 
+  # y <- y %>%
+  #   select_if(negate(function(col) is.numeric(col) && sum(col) == 0)) # selecting only columns that indicate at least one na value
+  # 
+  # names(y) <- paste0(names(y), '_na') # affixing the suffix _na to denote that they are na indicator cols.
+  # 
+  # dat <- cbind(dat, y) # affixing the na indicator columns to the original dataset.
 
   dummies <- dummyVars(last_DX ~., data = dat) # training the dummy variables model. done before splitting the data, as recommended here https://stats.stackexchange.com/questions/355293/creating-dummy-variables-before-or-after-splitting-to-train-test-datasets
   data_numeric <- predict(dummies, newdata= dat) # changing nominal to dummy in the original dataset
